@@ -1,7 +1,7 @@
 <template lang="pug">
   .container
     .row  
-      .col-6.ml-auto.mr-auto
+      .col-12.col-md-6.ml-auto.mr-auto
         form
           .form-group
             label(for='login') Твой логин
@@ -9,7 +9,7 @@
           .form-group
             label(for='password') Пароль
             input#password.form-control(type='password', placeholder='Пароль')
-          button.btn.btn-primary(type='submit') Submit
+          button.btn.btn-primary(type='submit') Войти
 
 </template>
 
