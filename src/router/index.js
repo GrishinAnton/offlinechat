@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
+
+
+import singin from '@/components/singIn/singIn'
+import chat from '@/components/chat/chat'
 
 Vue.use(Router)
 
@@ -9,8 +12,11 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
+      component: singin
+    },
+    {
+      path: '/chat',
+      component: chat
     }
   ]
 })
