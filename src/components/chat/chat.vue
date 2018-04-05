@@ -1,30 +1,40 @@
 <template lang="pug">
     .container
         .row
-            .col-7.ml-auto.mr-auto
+            .col-12.col-md-7.ml-auto.mr-auto
                 .chat-container.card
                     .card-body
                         .message.message__guest
                             .p-3.mb-2.bg-secondary.text-white.rounded-right
                                 p Привет
-                                small.text-dark Alex
+                                p.flex.flex_jc-sb
+                                    small.text-dark 11 Апреля 22:29
+                                    small.text-dark Alex   
                         .message.message__author
                             .p-3.mb-2.bg-info.text-white.rounded-left
                                 p Привет
-                                small.text-dark Anton
+                                p.flex.flex_jc-sb
+                                    small.text-dark 11 Апреля 22:30
+                                    small.text-dark Anton                                    
                         .message.message__guest
                             .p-3.mb-2.bg-secondary.text-white.rounded-right
                                 p Как дела?
-                                small.text-dark Alex
+                                p.flex.flex_jc-sb
+                                    small.text-dark 11 Апреля 22:31
+                                    small.text-dark Alex  
                         .message.message__guest
                             .p-3.mb-2.bg-secondary.text-white.rounded-right
                                 p не спи!
-                                small.text-dark Alex
+                                p.flex.flex_jc-sb
+                                    small.text-dark 11 Апреля 22:31
+                                    small.text-dark Alex  
                         .message.message__author
                             .p-3.mb-2.bg-info.text-white.rounded-left
                                 p Ок!
-                                small.text-dark Anton
-            .col-7.ml-auto.mr-auto
+                                p.flex.flex_jc-sb
+                                    small.text-dark 11 Апреля 22:32
+                                    small.text-dark Anton 
+            .col-12.col-md-7.ml-auto.mr-auto
                 .form-group
                     label(for='exampleFormControlTextarea1') Ваше сообщение:
                     textarea#exampleFormControlTextarea1.form-control
@@ -52,6 +62,10 @@
 
      &__guest {
         text-align: left;
+
+        .flex small:first-child {
+            order: 1;
+        }
      }
 
      &__author {
@@ -63,6 +77,10 @@
      }
  }
 
+.flex {
+    display: flex;
+    justify-content: space-between;
+}
 
 .form-group {
     text-align: left;
