@@ -8,13 +8,15 @@
 						)
 						label(:for="obj.name") {{ obj.title }}
 						input.form-control(	type="text"	
-							:class="validClass"
+							:class="controlValid[index].validClass"
 							:id="obj.name"							
 							:placeholder="obj.title"
-							@input="changeInput(index)"
+							@input="changeInput(index, $event)"
+							@focus="changeInput(index, $event)"
 						)
+						p.text-warning {{ controlValid[index].validMessage }}
 					button.btn.btn-primary(type='submit' 
-						disabled
+						:disabled="checkDisabled"
 					) Войти
 </template>
 
@@ -28,8 +30,10 @@ export default {
 				title: 'Твой логин',
 				value: '',
 				pattern: /^[\w\W]{3,15}$/,
+				minLength: 3,
 				validMessage: {
 					lengthMessage: 'Логин должен содержать минимум 3 символа',
+					loginWrong: 'Такой логин уже занят'
 				}
 			},
 			{
@@ -37,6 +41,7 @@ export default {
 				title: 'Пароль',
 				value: '',
 				pattern: /.+/,
+				minLength: 1,
 				validMessage: {
 					lengthMessage: 'Длина пароля составляет минимум 1 символ',
 					passwordLoginWrong: 'Пароль введен неверно или данный логин уже занят',/*Если у нас НЕТ кук пользователя и мы не знаем что логин его*/
@@ -45,51 +50,82 @@ export default {
 
 			}
 		],
-		control: [],
+		controlValid: [],
+		
 	}),
 	beforeMount() {
 		this.formItems.forEach( () => {
-			this.control.push({});
+			
+			var validParams = {
+				validMessage: '',
+				validClass: '',
+				validControl: ''
+			}
+			this.controlValid.push(validParams);
 		});
 	},
 	computed: {
-		validClass: {
-			get: function() {
-				console.log("+")
+		checkDisabled(){
 
-			},
-			set: function(index){
-				console.log(index)
+			function isTrue(obj){
+				return obj.validControl == true;
 			}
+
+			return  ! this.controlValid.every(isTrue);
+			
 		}
 	},
 	methods: {
-		changeInput(index){
+		changeInput(index, event){
 			var value = event.target.value;
+			var valueLength = value.length;
 
-			// this.validClass
-
-			this.controlFunc(index, this.validateValue(value, index));
+			this.controlValidation(index, valueLength, this.validateValue(value, index));
 		},
 		validateValue(value, index){//return boolean
 			var pattern = this.formItems[index].pattern;
 			return pattern.test(value);
 		},
-		controlFunc(index, validation){
-			var controlItem = this.control[index];
+		controlValidation(index, valueLength, validation){
+			var obj = this.formItems[index]
+			var controlItem = this.controlValid[index];
 
-			controlItem.index = index;
-			controlItem.validate = validation;
-		}
+			if(valueLength < obj.minLength){
+
+				controlItem.validMessage = obj.validMessage.lengthMessage;	
+				controlItem.validClass = '';
+				controlItem.validControl = validation;		
+			}
+			if(valueLength >= obj.minLength){
+
+				controlItem.validMessage = '';				
+				controlItem.validClass = 'is-valid';	
+				controlItem.validControl = validation;			
+			}
+		},
 	}
-
 }
 </script>
 
 
 <style lang="scss">
 .form-group {
+	position: relative;
+	margin-bottom: 20px;
+
 	text-align: left;
+	
+
+
+	.text-warning {
+		position: absolute;
+		margin: 0;
+		left: 0;
+		bottom: -20px;
+
+		font-size: 14px;
+	}
+
 }
 
 </style>
