@@ -35,10 +35,13 @@
                                     small.text-dark 11 Апреля 22:32
                                     small.text-dark Anton 
             .col-12.col-md-7.ml-auto.mr-auto
-                .form-group
-                    label(for='exampleFormControlTextarea1') Ваше сообщение:
-                    textarea#exampleFormControlTextarea1.form-control
-                    button.btn.btn-success(type='button') Отправить
+                .input-group.mb-3
+                    input.form-control(type='text', placeholder="Ваше сообщение")
+                    .input-group-append
+                        button.btn.btn-outline-secondary(type='button') Отправить
+
+
+
 
 
 </template>
