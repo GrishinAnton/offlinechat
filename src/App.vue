@@ -31,9 +31,11 @@
     </a>
 
     <h1>Онлайн чат</h1> 
-    <router-link to="/" class="link">На главную</router-link>
-    <router-link to="/chat" class="link">Чат</router-link>
-    <router-view></router-view>
+      <router-link to="/" class="link">На главную</router-link>    
+      <router-link to="/chat" class="link">Чат</router-link>   
+    <transition name="slide-fade" mode="out-in">
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 
@@ -98,6 +100,24 @@ h1 {
 
 .link {
   margin-right: 20px;
+}
+
+.slide-fade-enter {
+  transform: translateX(300px);
+}
+
+.slide-fade-enter-active {
+  transform: translateX(300);
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transform: translateX(-300px);
+  transition: all .3s ease;
+}
+.slide-fade-enter,
+.slide-fade-leave-active {
+  opacity: 0;
+  transition: all .5s ease;
 }
 
 </style>
