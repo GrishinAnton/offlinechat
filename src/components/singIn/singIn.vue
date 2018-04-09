@@ -110,12 +110,11 @@ export default {
 
 <style lang="scss">
 .form-group {
+
 	position: relative;
 	margin-bottom: 20px;
 
 	text-align: left;
-	
-
 
 	.text-warning {
 		position: absolute;
@@ -125,7 +124,6 @@ export default {
 
 		font-size: 14px;
 	}
-
 }
 
 </style>

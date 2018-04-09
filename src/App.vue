@@ -36,15 +36,29 @@
     <h1>Онлайн чат</h1> 
       <router-link to="/" class="link">На главную</router-link>    
       <router-link to="/chat" class="link">Чат</router-link>   
-    <transition name="slide-fade" mode="out-in">
+    <transition  :name="transitionName" mode="out-in" appear >
       <router-view></router-view>
     </transition>
+    <!-- animationFlag -->
+    <span></span>
+    
   </div>
+  
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  data: () => ({
+  }),
+
+  watch: {
+    '$route' (to, from) {
+      const toDepth = to.path.split('/')[1].length
+      const fromDepth = from.path.split('/')[1].length
+      this.transitionName = toDepth < fromDepth ? 'slide-fade-right' : 'slide-fade-left'
+    }
+  }
 }
 </script>
 
@@ -104,21 +118,40 @@ h1 {
 .link {
   margin-right: 20px;
 }
-
-.slide-fade-enter {
+//left
+.slide-fade-left-enter {
   transform: translateX(300px);
 }
 
-.slide-fade-enter-active {
+.slide-fade-left-enter-active {
   transform: translateX(300);
   transition: all .3s ease;
 }
-.slide-fade-leave-active {
+.slide-fade-left-leave-active {
   transform: translateX(-300px);
   transition: all .3s ease;
 }
-.slide-fade-enter,
-.slide-fade-leave-active {
+.slide-fade-left-enter,
+.slide-fade-left-leave-active,{
+  opacity: 0;
+  transition: all .5s ease;
+}
+
+//right
+.slide-fade-right-enter {
+  transform: translateX(-300px);
+}
+
+.slide-fade-right-enter-active {
+  transform: translateX(-300);
+  transition: all .3s ease;
+}
+.slide-fade-right-leave-active {
+  transform: translateX(300px);
+  transition: all .3s ease;
+}
+.slide-fade-right-enter,
+.slide-fade-right-leave-active {
   opacity: 0;
   transition: all .5s ease;
 }
