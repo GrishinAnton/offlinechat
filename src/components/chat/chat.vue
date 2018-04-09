@@ -9,44 +9,37 @@
             .col-12.col-md-7.ml-auto.mr-auto
                 
                 .chat-container.card
-                    //- Шаблон экрана загрузки
-                    .chat-loading.bg-light(style="display: none")
-                        .chat-loading__inner
-                            span
-                            span
-                            span
-                    .chat-wrapper
-                        .card-body
-                            .message.message__guest
-                                .p-3.mb-2.bg-secondary.text-white.rounded-right
-                                    p Привет
-                                    p.flex.flex_jc-sb
-                                        small.text-dark 11 Апреля 22:29
-                                        small.text-dark Alex   
-                            .message.message__author
-                                .p-3.mb-2.bg-info.text-white.rounded-left
-                                    p Привет
-                                    p.flex.flex_jc-sb
-                                        small.text-dark 11 Апреля 22:30
-                                        small.text-dark Anton                                    
-                            .message.message__guest
-                                .p-3.mb-2.bg-secondary.text-white.rounded-right
-                                    p Как дела?
-                                    p.flex.flex_jc-sb
-                                        small.text-dark 11 Апреля 22:31
-                                        small.text-dark Alex  
-                            .message.message__guest
-                                .p-3.mb-2.bg-secondary.text-white.rounded-right
-                                    p не спи!
-                                    p.flex.flex_jc-sb
-                                        small.text-dark 11 Апреля 22:31
-                                        small.text-dark Alex  
-                            .message.message__author
-                                .p-3.mb-2.bg-info.text-white.rounded-left
-                                    p Ок!
-                                    p.flex.flex_jc-sb
-                                        small.text-dark 11 Апреля 22:32
-                                        small.text-dark Anton 
+                    .card-body
+                        .message.message__guest
+                            .alert.alert-secondary
+                                p  Привет
+                                p.flex.flex_jc-sb
+                                    small.text-dark 11 Апреля 22:29
+                                    small.text-dark Alex   
+                        .message.message__author
+                            .alert.alert-primary
+                                p  Привет
+                                p.flex.flex_jc-sb
+                                    small.text-dark 11 Апреля 22:29
+                                    small.text-dark Anton                             
+                        .message.message__guest
+                            .alert.alert-secondary
+                                p  Как дела?
+                                p.flex.flex_jc-sb
+                                    small.text-dark 11 Апреля 22:29
+                                    small.text-dark Alex  
+                        .message.message__guest
+                            .alert.alert-secondary
+                                p  не спи!
+                                p.flex.flex_jc-sb
+                                    small.text-dark 11 Апреля 22:29
+                                    small.text-dark Alex  
+                        .message.message__author
+                            .alert.alert-primary
+                                p  ок!
+                                p.flex.flex_jc-sb
+                                    small.text-dark 11 Апреля 22:29
+                                    small.text-dark Anton 
             .col-12.col-md-7.ml-auto.mr-auto
                 .input-group.mb-3
                     input.form-control(type='text', placeholder="Ваше сообщение")
