@@ -95,13 +95,13 @@ export default {
 			var obj = this.formItems[index]
 			var controlItem = this.controlValid[index];
 
-			if(valueLength < obj.minLength){
+			if(valueLength < obj.minLength && validation){
 
 				controlItem.validMessage = obj.validMessage.lengthMessage;	
 				controlItem.validClass = '';
 				controlItem.validControl = validation;		
 			}
-			if(valueLength >= obj.minLength){
+			if(valueLength >= obj.minLength && validation){
 
 				controlItem.validMessage = '';				
 				controlItem.validClass = 'is-valid';	

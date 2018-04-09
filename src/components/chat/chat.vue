@@ -6,40 +6,26 @@
                     button(type="button" class="btn btn-warning") Выйти
                 .network-indicator
                     p.network-indicator__status.network-indicator__status_offline Онлайн
+            .col-12.col-md-7.mr-auto.ml-auto.header-panel
+                button(type="button" class="btn btn-warning"
+                        @click="addMessageGuest"
+                
+                ) Сообщение гостя
+                button(type="button" class="btn btn-primary"
+                        @click="addMessageAuthor"
+                ) Сообщение автора
             .col-12.col-md-7.ml-auto.mr-auto
                 
                 .chat-container.card
                     .card-body
-                        .message.message__guest
-                            .alert.alert-secondary
-                                p  Привет
-                                p.flex.flex_jc-sb
-                                    small.text-dark 11 Апреля 22:29
-                                    small.text-dark Alex   
-                        .message.message__author
-                            .alert.alert-primary
-                                p  Привет
-                                p.flex.flex_jc-sb
-                                    small.text-dark 11 Апреля 22:29
-                                    small.text-dark Anton                             
-                        .message.message__guest
-                            .alert.alert-secondary
-                                p  Как дела?
-                                p.flex.flex_jc-sb
-                                    small.text-dark 11 Апреля 22:29
-                                    small.text-dark Alex  
-                        .message.message__guest
-                            .alert.alert-secondary
-                                p  не спи!
-                                p.flex.flex_jc-sb
-                                    small.text-dark 11 Апреля 22:29
-                                    small.text-dark Alex  
-                        .message.message__author
-                            .alert.alert-primary
-                                p  ок!
-                                p.flex.flex_jc-sb
-                                    small.text-dark 11 Апреля 22:29
-                                    small.text-dark Anton 
+                        ul
+                            li(v-for="(message, index) in messages" :key="index")
+                                .message(:class="{ message__guest: message.guest, message__author: message.author }")
+                                    .alert(:class="{ 'alert-secondary': message.guest, 'alert-primary': message.author }")
+                                        p  {{ message.message }}
+                                        p.flex.flex_jc-sb
+                                            small.text-dark {{ message.date }}
+                                            small.text-dark {{ message.from }}                       
             .col-12.col-md-7.ml-auto.mr-auto
                 .input-group.mb-3
                     input.form-control(type='text', placeholder="Ваше сообщение")
@@ -55,6 +41,60 @@
 <script>
     export default {
         name: 'chat',
+        data: () => ({
+            messages: [
+                {
+                    guest: true,
+                    from: "Alex",
+                    date: "11 Апреля 22:29",
+                    message: "Привет"
+                },
+                {
+                    author: true,
+                    from: "Anton",
+                    date: "11 Апреля 22:30",
+                    message: "Привет"
+                },
+                {
+                    guest: true,
+                    from: "Alex",
+                    date: "11 Апреля 22:31",
+                    message: "Как дела?"
+                },
+                {
+                    guest: true,
+                    from: "Alex",
+                    date: "11 Апреля 22:31",
+                    message: "не спи!"
+                },
+                {
+                    author: true,
+                    from: "Anton",
+                    date: "11 Апреля 22:45",
+                    message: "ок"
+                }
+            ]
+        }),
+        methods: {
+            addMessageGuest(){
+                
+                this.messages.push({
+                    guest: true,
+                    from: "Alex",
+                    date: "11 Апреля 22:29",
+                    message: "Привет"
+                })
+            },
+            addMessageAuthor(){
+
+                this.messages.push({
+                    author: true,
+                    from: "Anton",
+                    date: "11 Апреля 22:45",
+                    message: "ок"
+                })
+            }
+        }
         
     }
 </script>
@@ -142,6 +182,12 @@
 
 .card-body {
     padding: 10px;
+
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
 }
 
 
