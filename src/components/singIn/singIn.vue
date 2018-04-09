@@ -1,6 +1,11 @@
 <template lang="pug">
 	.container
 		.row  
+			.col-12.col-md-6.mr-auto.ml-auto.header-panel
+				.exit-button
+				.network-indicator
+					p.network-indicator__status.network-indicator__status_online Онлайн
+			.w-100
 			.col-12.col-md-6.ml-auto.mr-auto
 				form
 					.form-group(

@@ -49,6 +49,10 @@ export default {
 </script>
 
 <style lang="scss">
+
+html {
+  margin-left: calc(100vw - 100%)
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   text-align: center;
@@ -121,6 +125,45 @@ h1 {
 .slide-fade-leave-active {
   opacity: 0;
   transition: all .5s ease;
+}
+
+.header-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.network-indicator {
+
+  &__status {
+      margin: 0;
+      position: relative;
+      padding-left: 15px;
+
+      &::before {
+          position: absolute;
+          content: "";
+          top: 50%;
+          left: 0;
+          transform: translateY(-50%);
+
+          width: 10px;
+          height: 10px;
+
+          border-radius: 50%;
+      }
+
+      &_online::before {
+          background-color: lawngreen;   
+      }
+
+      &_offline::before {
+          background-color: lightcoral;   
+      }
+  }
 }
 
 </style>
