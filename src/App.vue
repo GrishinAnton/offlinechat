@@ -39,9 +39,7 @@
     <transition  :name="transitionName" mode="out-in" appear >
       <router-view></router-view>
     </transition>
-    <!-- animationFlag -->
-    <span></span>
-    
+  
   </div>
   
 </template>
