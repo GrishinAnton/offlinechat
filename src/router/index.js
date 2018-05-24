@@ -12,11 +12,13 @@ export default new Router({
   routes: [
     {
       path: '/',
-      component: singin
+      component: singin,
+      props: true
     },
     {
       path: '/chat',
-      component: chat
+      component: chat,
+      props: true
     }
   ]
 })

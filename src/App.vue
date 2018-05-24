@@ -35,7 +35,7 @@
 
     <h1>Онлайн чат</h1> 
       <router-link to="/" class="link">На главную</router-link>    
-      <router-link to="/chat" class="link">Чат</router-link>   
+      <router-link to="/chat" class="link">Чат</router-link>      
     <transition  :name="transitionName" mode="out-in" appear >
       <router-view></router-view>
     </transition>
@@ -48,9 +48,8 @@
 export default {
   name: 'App',
   data: () => ({
-    transitionName: ''
+    transitionName: '',
   }),
-
   watch: {
     '$route' (to, from) {
       const toDepth = to.path.split('/')[1].length
