@@ -42,20 +42,12 @@
 
 import firebase from 'firebase';
 
-	var config = {
-		apiKey: "AIzaSyBlbfDC9l35RrE-dD9Mz_0bPZoUBcNfmg0",
-		authDomain: "offlinechat-2up.firebaseapp.com",
-		databaseURL: "https://offlinechat-2up.firebaseio.com",
-		projectId: "offlinechat-2up",
-		storageBucket: "offlinechat-2up.appspot.com",
-		messagingSenderId: "612784355266"
-	};
-
-	firebase.initializeApp(config)
+const database = firebase.database();
 
 export default {
 	name: 'singIn',
 	data: () => ({
+		authUser: '',
 		email: {
 			email: '',
 			wrong: '',
@@ -74,31 +66,44 @@ export default {
 			this.sing = e;
 		},	
 		submit(){
-			if (this.sing == 'reg') { 
-				firebase.auth().createUserWithEmailAndPassword(this.email.email, this.password.password)
-				.then(result=>{
-					this.$router.push('/chat')
-					
-				})
-				.catch(e => {
-					console.log(e);
-						this.email.message = ''
-						this.email.wrong = ''
-						this.password.message = ''
-						this.password.wrong = ''
-					if(e.code === 'auth/invalid-email'){
-						this.email.message = `🤕 ${e.message}`
-						this.email.wrong = true;
-					} else {
-						this.password.message = `🤕 ${e.message}`
-						this.password.wrong = true;
-					} 			 
-				})
+
+			let request;
+
+			if(this.sing === 'reg'){
+				request = firebase.auth().createUserWithEmailAndPassword(this.email.email, this.password.password)
 			} else {
-				console.log('---');
-				
+				request = firebase.auth().signInWithEmailAndPassword(this.email.email, this.password.password)
 			}
+
+			request
+			.then(result=>{
+				this.$router.push('/chat')
+				
+			})
+			.catch(e => {
+				console.log(e);
+					this.email.message = ''
+					this.email.wrong = ''
+					this.password.message = ''
+					this.password.wrong = ''
+				if(e.code === 'auth/invalid-email'){
+					this.email.message = `🤕 ${e.message}`
+					this.email.wrong = true;
+				} else {
+					this.password.message = `🤕 ${e.message}`
+					this.password.wrong = true;
+				} 			 
+			});
 		}
+	},
+	created() {
+		firebase.auth().onAuthStateChanged(user => {
+			this.authUser = user;
+
+			if (this.authUser) {
+				this.$router.push('/chat');
+			}
+		})
 	}
 }
 </script>

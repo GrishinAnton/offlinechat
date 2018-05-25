@@ -34,8 +34,8 @@
     </a>
 
     <h1>Онлайн чат</h1> 
-      <router-link to="/" class="link">На главную</router-link>    
-      <router-link to="/chat" class="link">Чат</router-link>      
+      <!-- <router-link to="/" class="link">На главную</router-link>    
+      <router-link to="/chat" class="link">Чат</router-link>       -->
     <transition  :name="transitionName" mode="out-in" appear >
       <router-view></router-view>
     </transition>
@@ -45,6 +45,18 @@
 </template>
 
 <script>
+import firebase from 'firebase';
+
+	var config = {
+		apiKey: "AIzaSyBlbfDC9l35RrE-dD9Mz_0bPZoUBcNfmg0",
+		authDomain: "offlinechat-2up.firebaseapp.com",
+		databaseURL: "https://offlinechat-2up.firebaseio.com/",
+		projectId: "offlinechat-2up",
+		storageBucket: "offlinechat-2up.appspot.com",
+		messagingSenderId: "612784355266"
+	};
+
+	firebase.initializeApp(config)
 export default {
   name: 'App',
   data: () => ({
