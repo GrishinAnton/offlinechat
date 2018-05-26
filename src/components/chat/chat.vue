@@ -14,7 +14,7 @@
                         span
                         span
                         span
-                .chat-container.card(v-else)
+                .chat-container.card(v-else ref="container")
                     .card-body
                         ul
                             li(v-for="(message, index) in messages" :key="index")
@@ -75,8 +75,16 @@ const database = firebase.database();
                 
             }
         },
-        created() {
-           
+        watch: {
+            messages: function() {
+                this.$nextTick(function(){
+                    if(this.$refs.container){                  
+                        this.$refs.container.scrollTo(0, this.$refs.container.scrollHeight)
+                    }  
+                });                              
+            }
+        },
+        created() {           
             firebase.auth().onAuthStateChanged(user => {
                 this.authUser = user;
                 
@@ -92,7 +100,7 @@ const database = firebase.database();
                     var obj = snapshot.val()
                            
                     if(obj.date) {
-                        obj.date = new Date(obj.date)
+                        obj.date = new Date(obj.date).toLocaleString()
                     } else {
                         obj.date = ''
                     }
@@ -104,7 +112,6 @@ const database = firebase.database();
                     
                     this.messages.push({...obj, id: snapshot.key});
                     this.loadScreen = false;
-                     
                 })                
             }, 0);    
             
