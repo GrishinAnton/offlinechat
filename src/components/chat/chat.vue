@@ -3,20 +3,18 @@
         .row
             .col-12.col-md-7.mr-auto.ml-auto.header-panel
                 .exit-button
-                    button(type="button" class="btn btn-warning") Выйти
+                    button(type="button" class="btn btn-warning" @click.prevent="exit") Выйти
                 .network-indicator
                     p.network-indicator__status.network-indicator__status_offline Онлайн
             .col-12.col-md-7.mr-auto.ml-auto.header-panel
-                button(type="button" class="btn btn-warning"
-                        @click="addMessageGuest"
-                
-                ) Сообщение гостя
-                button(type="button" class="btn btn-primary"
-                        @click="addMessageAuthor"
-                ) Сообщение автора
+                p Вы вошли как {{ authUser.email }}
             .col-12.col-md-7.ml-auto.mr-auto
-                
-                .chat-container.card
+                .chat-loading.bg-light(v-if="loadScreen")
+                    .chat-loading__inner
+                        span
+                        span
+                        span
+                .chat-container.card(v-else ref="container")
                     .card-body
                         ul
                             li(v-for="(message, index) in messages" :key="index")
@@ -25,75 +23,98 @@
                                         p  {{ message.message }}
                                         p.flex.flex_jc-sb
                                             small.text-dark {{ message.date }}
-                                            small.text-dark {{ message.from }}                       
+                                            small.text-dark {{ message.email }}                       
             .col-12.col-md-7.ml-auto.mr-auto
                 .input-group.mb-3
-                    input.form-control(type='text', placeholder="Ваше сообщение")
+                    input.form-control(type='text', placeholder="Ваше сообщение" v-model="currentMessage")
                     .input-group-append
-                        button.btn.btn-outline-secondary(type='button') Отправить
-
-
-
-
-
+                        button.btn.btn-outline-secondary(type='button' @click.prevent="send") Отправить
 </template>
 
 <script>
+import firebase from 'firebase';
+
+const database = firebase.database();
+
+        
     export default {
         name: 'chat',
         data: () => ({
-            messages: [
-                {
-                    guest: true,
-                    from: "Alex",
-                    date: "11 Апреля 22:29",
-                    message: "Привет"
-                },
-                {
-                    author: true,
-                    from: "Anton",
-                    date: "11 Апреля 22:30",
-                    message: "Привет"
-                },
-                {
-                    guest: true,
-                    from: "Alex",
-                    date: "11 Апреля 22:31",
-                    message: "Как дела?"
-                },
-                {
-                    guest: true,
-                    from: "Alex",
-                    date: "11 Апреля 22:31",
-                    message: "не спи!"
-                },
-                {
-                    author: true,
-                    from: "Anton",
-                    date: "11 Апреля 22:45",
-                    message: "ок"
-                }
-            ]
+            authUser: '',
+            email: {
+                email: '',
+                wrong: '',
+                message: ''
+            },
+            password: {
+                password: '',
+                wrong: '',
+                message: ''
+            },
+            messages: [],
+            loadScreen: true,
+            currentMessage: ''
         }),
         methods: {
-            addMessageGuest(){
-                
-                this.messages.push({
-                    guest: true,
-                    from: "Alex",
-                    date: "11 Апреля 22:29",
-                    message: "Привет"
-                })
-            },
-            addMessageAuthor(){
+            exit(){
 
-                this.messages.push({
-                    author: true,
-                    from: "Anton",
-                    date: "11 Апреля 22:45",
-                    message: "ок"
+                firebase.auth().signOut()
+                .then(response => {
+                    this.$router.push('/')
+                    
                 })
+                .catch(e => console.log(e, 'chat'))
+            },
+            send() {
+                if(this.currentMessage){
+                    database.ref('messages').push().set({message: this.currentMessage, email: this.email.email, date: firebase.database.ServerValue.TIMESTAMP})
+                    this.currentMessage = '';
+                } else {
+                    return
+                }
+                
             }
+        },
+        watch: {
+            messages: function() {
+                this.$nextTick(function(){
+                    if(this.$refs.container){                  
+                        this.$refs.container.scrollTo(0, this.$refs.container.scrollHeight)
+                    }  
+                });                              
+            }
+        },
+        created() {           
+            firebase.auth().onAuthStateChanged(user => {
+                this.authUser = user;
+                
+                if(!this.authUser) {
+                    this.$router.push('/')
+                } else {
+                    this.email.email = this.authUser.email
+                }
+            })        
+            setTimeout(() => {
+                database.ref('messages').on('child_added', snapshot => {
+
+                    var obj = snapshot.val()
+                           
+                    if(obj.date) {
+                        obj.date = new Date(obj.date).toLocaleString()
+                    } else {
+                        obj.date = ''
+                    }
+                    if(obj.email === this.email.email){
+                        obj['author'] = true
+                    } else {
+                        obj['guest'] = true
+                    }
+                    
+                    this.messages.push({...obj, id: snapshot.key});
+                    this.loadScreen = false;
+                })                
+            }, 0);    
+            
         }
         
     }
@@ -135,7 +156,8 @@
      display: flex;
      position: relative;
      width: 100%;
-     height: 100%;
+     height: 394px;
+     margin-bottom: 20px;
 
      &__inner {
          display: flex;

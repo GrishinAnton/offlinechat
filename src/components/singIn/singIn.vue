@@ -7,107 +7,103 @@
 					p.network-indicator__status.network-indicator__status_online Онлайн
 			.w-100
 			.col-12.col-md-6.ml-auto.mr-auto
+				.label-group
+					.form-check.mr-3
+						input#exampleRadios1.form-check-input(type='radio', name='exampleRadios', value='option1', checked='', @change="singForm('reg')")
+						label.form-check-label(for='exampleRadios1') Зарегестрироваться
+					.form-check
+						input#exampleRadios2.form-check-input(type='radio', name='exampleRadios', value='option2', @change="singForm('sin')")
+						label.form-check-label(for='exampleRadios2') Войти 
 				form
-					.form-group(
-						v-for="(obj, index) in formItems"
+					.form-group
+						label(for="email") Ваш email
+						input.form-control(	
+							type="email"
+							id="email"							
+							placeholder="Ваш email"
+							v-model="email.email"
 						)
-						label(:for="obj.name") {{ obj.title }}
-						input.form-control(	type="text"	
-							:class="controlValid[index].validClass"
-							:id="obj.name"							
-							:placeholder="obj.title"
-							@input="changeInput(index, $event)"
-							@focus="changeInput(index, $event)"
+						p.text-warning(v-show="email.wrong") {{ email.message }}
+					.form-group
+						label(for="password") Ваш пароль
+						input.form-control(	
+							type="text"	
+							id="password"							
+							placeholder="Ваш пароль"
+							v-model="password.password"
 						)
-						p.text-warning {{ controlValid[index].validMessage }}
+						p.text-warning(v-show="password.wrong") {{ password.message }}
 					button.btn.btn-primary(type='submit' 
-						:disabled="checkDisabled"
+						@click.prevent="submit"
 					) Войти
 </template>
 
 <script>
+
+import firebase from 'firebase';
+
+const database = firebase.database();
+
 export default {
 	name: 'singIn',
 	data: () => ({
-		formItems: [
-			{
-				name: 'login',
-				title: 'Твой логин',
-				value: '',
-				pattern: /^[\w\W]{3,15}$/,
-				minLength: 3,
-				validMessage: {
-					lengthMessage: 'Логин должен содержать минимум 3 символа',
-					loginWrong: 'Такой логин уже занят'
-				}
-			},
-			{
-				name: 'password',
-				title: 'Пароль',
-				value: '',
-				pattern: /.+/,
-				minLength: 1,
-				validMessage: {
-					lengthMessage: 'Длина пароля составляет минимум 1 символ',
-					passwordLoginWrong: 'Пароль введен неверно или данный логин уже занят',/*Если у нас НЕТ кук пользователя и мы не знаем что логин его*/
-					passwordWrong: 'Пароль введен неверно'/*Если у нас ЕСТЬ куки пользователя и мы знаем что логин его*/
-				}
-
-			}
-		],
-		controlValid: [],
+		authUser: '',
+		email: {
+			email: '',
+			wrong: '',
+			message: ''
+		},
+		password: {
+			password: '',
+			wrong: '',
+			message: ''
+		},
+		sing: 'reg'
 		
 	}),
-	beforeMount() {
-		this.formItems.forEach( () => {
-			
-			var validParams = {
-				validMessage: '',
-				validClass: '',
-				validControl: ''
-			}
-			this.controlValid.push(validParams);
-		});
-	},
-	computed: {
-		checkDisabled(){
+	methods: {	
+		singForm(e) {          
+			this.sing = e;
+		},	
+		submit(){
 
-			function isTrue(obj){
-				return obj.validControl == true;
+			let request;
+
+			if(this.sing === 'reg'){
+				request = firebase.auth().createUserWithEmailAndPassword(this.email.email, this.password.password)
+			} else {
+				request = firebase.auth().signInWithEmailAndPassword(this.email.email, this.password.password)
 			}
 
-			return  ! this.controlValid.every(isTrue);
-			
+			request
+			.then(result=>{
+				this.$router.push('/chat')
+				
+			})
+			.catch(e => {
+				console.log(e);
+					this.email.message = ''
+					this.email.wrong = ''
+					this.password.message = ''
+					this.password.wrong = ''
+				if(e.code === 'auth/invalid-email'){
+					this.email.message = `🤕 ${e.message}`
+					this.email.wrong = true;
+				} else {
+					this.password.message = `🤕 ${e.message}`
+					this.password.wrong = true;
+				} 			 
+			});
 		}
 	},
-	methods: {
-		changeInput(index, event){
-			var value = event.target.value;
-			var valueLength = value.length;
+	created() {
+		firebase.auth().onAuthStateChanged(user => {
+			this.authUser = user;
 
-			this.controlValidation(index, valueLength, this.validateValue(value, index));
-		},
-		validateValue(value, index){//return boolean
-			var pattern = this.formItems[index].pattern;
-			return pattern.test(value);
-		},
-		controlValidation(index, valueLength, validation){
-			var obj = this.formItems[index]
-			var controlItem = this.controlValid[index];
-
-			if(valueLength < obj.minLength && validation){
-
-				controlItem.validMessage = obj.validMessage.lengthMessage;	
-				controlItem.validClass = '';
-				controlItem.validControl = validation;		
+			if (this.authUser) {
+				this.$router.push('/chat');
 			}
-			if(valueLength >= obj.minLength && validation){
-
-				controlItem.validMessage = '';				
-				controlItem.validClass = 'is-valid';	
-				controlItem.validControl = validation;			
-			}
-		},
+		})
 	}
 }
 </script>
@@ -129,6 +125,15 @@ export default {
 
 		font-size: 14px;
 	}
+}
+
+.label-group {
+  display: flex;
+  justify-content: center;
+}
+
+.form-check-label {
+  cursor: pointer;
 }
 
 </style>
