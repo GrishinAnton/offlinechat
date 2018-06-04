@@ -17,13 +17,20 @@
                 .chat-container.card(v-else ref="container")
                     .card-body
                         ul
-                            li(v-for="(message, index) in messages" :key="index")
+                            li(v-for="(message, index) in messages" :key="message.id")
                                 .message(:class="{ message__guest: message.guest, message__author: message.author }")
                                     .alert(:class="{ 'alert-secondary': message.guest, 'alert-primary': message.author }")
-                                        p  {{ message.message }}
+                                        p(v-if="!editingMessage")  {{ message.message }}
+                                        textarea.form-control(v-else v-model="messageText")
                                         p.flex.flex_jc-sb
                                             small.text-dark {{ message.date }}
-                                            small.text-dark {{ message.email }}                       
+                                            small.text-dark {{ message.email }}   
+                                        .card-footer.message-controls(v-if="!editingMessage")
+                                            button.mr-3(@click.prevent="deleteMessage(message.id)") Удалить
+                                            button(@click.prevent="editMessage(message)") Отредактировать        
+                                        .card-footer.message-controls(v-else)
+                                            button.mr-3(@click.prevent="cancelMessage") Отменить
+                                            button(@click.prevent="updateMessage") Обновить     
             .col-12.col-md-7.ml-auto.mr-auto
                 .input-group.mb-3
                     input.form-control(type='text', placeholder="Ваше сообщение" v-model="currentMessage")
@@ -53,7 +60,9 @@ const database = firebase.database();
             },
             messages: [],
             loadScreen: true,
-            currentMessage: ''
+            currentMessage: '',
+            editingMessage: '',
+            messageText: ''
         }),
         methods: {
             exit(){
@@ -73,6 +82,18 @@ const database = firebase.database();
                     return
                 }
                 
+            },
+            deleteMessage(message) {
+                database.ref('messages').child(message).remove()
+            },
+            editMessage(message){
+                this.editingMessage = message;
+                this.messageText = message.message;
+
+            },
+            cancelMessage(){
+                this.editingMessage = '';
+                this.messageText = '';
             }
         },
         watch: {
@@ -93,27 +114,34 @@ const database = firebase.database();
                 } else {
                     this.email.email = this.authUser.email
                 }
-            })        
-            setTimeout(() => {
-                database.ref('messages').on('child_added', snapshot => {
+            })  
 
-                    var obj = snapshot.val()
-                           
-                    if(obj.date) {
-                        obj.date = new Date(obj.date).toLocaleString()
-                    } else {
-                        obj.date = ''
-                    }
-                    if(obj.email === this.email.email){
-                        obj['author'] = true
-                    } else {
-                        obj['guest'] = true
-                    }
-                    
-                    this.messages.push({...obj, id: snapshot.key});
-                    this.loadScreen = false;
-                })                
-            }, 0);    
+            database.ref('messages').on('child_added', snapshot => {
+
+                var obj = snapshot.val()
+                        
+                if(obj.date) {
+                    obj.date = new Date(obj.date).toLocaleString()
+                } else {
+                    obj.date = ''
+                }
+                if(obj.email === this.email.email){
+                    obj['author'] = true
+                } else {
+                    obj['guest'] = true
+                }
+                
+                this.messages.push({...obj, id: snapshot.key});
+                this.loadScreen = false;
+            })                
+            
+            database.ref('messages').on('child_removed', snapshot => {
+
+                    let deletedMessage = this.messages.find(message => message.id === snapshot.key);   
+                    let index = this.messages.indexOf(deletedMessage);
+                    this.messages.splice(index,1);
+     
+                }) 
             
         }
         
@@ -230,6 +258,25 @@ const database = firebase.database();
 
 .btn-success {
     margin-top: 20px;
+}
+
+.message-controls {
+    padding: 0;
+    padding-top: 3px;
+    text-align: left;
+
+    button {
+        margin: 0;
+        padding: 0;
+
+        background-color: transparent;
+        border: none;
+        font-size: 12px;
+        font-family: inherit;
+        cursor: pointer;
+
+    }
+
 }
 
 
