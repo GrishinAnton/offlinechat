@@ -94,6 +94,10 @@ const database = firebase.database();
             cancelMessage(){
                 this.editingMessage = '';
                 this.messageText = '';
+            },
+            updateMessage(){
+                database.ref('messages').child(this.editingMessage.id).update({message: this.messageText})
+                this.cancelMessage()
             }
         },
         watch: {
@@ -137,11 +141,17 @@ const database = firebase.database();
             
             database.ref('messages').on('child_removed', snapshot => {
 
-                    let deletedMessage = this.messages.find(message => message.id === snapshot.key);   
-                    let index = this.messages.indexOf(deletedMessage);
-                    this.messages.splice(index,1);
-     
-                }) 
+                let deletedMessage = this.messages.find(message => message.id === snapshot.key);   
+                let index = this.messages.indexOf(deletedMessage);
+                this.messages.splice(index,1);
+    
+            }) 
+            database.ref('messages').on('child_changed', snapshot => {
+
+                let updateMessage = this.messages.find(message => message.id === snapshot.key);
+                updateMessage.message = snapshot.val().message;
+    
+            }) 
             
         }
         
