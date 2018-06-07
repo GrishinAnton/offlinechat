@@ -93,28 +93,19 @@ const database = firebase.database();
                 } else {
                     this.email.email = this.authUser.email
                 }
-            })        
-            setTimeout(() => {
-                database.ref('messages').on('child_added', snapshot => {
-
-                    var obj = snapshot.val()
-                           
-                    if(obj.date) {
-                        obj.date = new Date(obj.date).toLocaleString()
-                    } else {
-                        obj.date = ''
-                    }
-                    if(obj.email === this.email.email){
-                        obj['author'] = true
-                    } else {
-                        obj['guest'] = true
-                    }
-                    
-                    this.messages.push({...obj, id: snapshot.key});
-                    this.loadScreen = false;
-                })                
-            }, 0);    
+            }) 
             
+           database.ref('messages').on('child_added', snapshot => {
+
+                var obj = snapshot.val();
+
+                obj.date ? new Date(obj.date) : '';                           
+                obj.email === this.email.email ? obj['author'] = true : obj['guest'] = true;
+
+                this.messages.push({...obj, id: snapshot.key});
+                this.loadScreen = false;
+                    
+            });            
         }
         
     }
